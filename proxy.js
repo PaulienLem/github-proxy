@@ -1,4 +1,3 @@
-// proxy.js
 import express from "express";
 import fetch from "node-fetch";
 
@@ -19,7 +18,16 @@ app.get("/proxy", async (req, res) => {
   }
 
   try {
-    const response = await fetch(uri);
+    // Force fresh fetch by bypassing cache headers
+    const response = await fetch(uri, {
+      headers: {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "If-Modified-Since": "Thu, 01 Jan 1970 00:00:00 GMT"
+      }
+    });
+
     const data = await response.text();
 
     // Add CORS headers
